@@ -71,6 +71,14 @@ class FacultyClassRecords(models.Model):
             rec.actual_extra_hr = 0.0
             rec.extra_hour = 0.0
 
+            opening_hour = 0.0
+
+            # Check if subject_id is linked to op.subject and has active_add_on
+            if rec.subject_id:
+                subject_record = self.env['op.subject'].sudo().search([('id', '=', rec.subject_id.id), ('course_id', '=', rec.course_id.id),], limit=1)
+                if subject_record and subject_record.active_add_on:
+                    opening_hour = subject_record.opening_hour or 0.0
+
             if rec.batch_id and rec.course_id and rec.branch_id and rec.subject_id:
                 domain = [
                     ('batch_id', '=', rec.batch_id.id),
@@ -85,9 +93,9 @@ class FacultyClassRecords(models.Model):
                 matched_records = self.env['faculty.records'].sudo().search(domain)
                 total_taken_hours = sum(m.total_duration for m in matched_records)
 
-                rec.total_this_sub_hrs = total_taken_hours + rec.total_duration
+                rec.total_this_sub_hrs = total_taken_hours + rec.total_duration + opening_hour
             else:
-                rec.total_this_sub_hrs = rec.total_duration
+                rec.total_this_sub_hrs = rec.total_duration + opening_hour
 
             rec.balance_standard_hour = rec.standard_hours - rec.total_this_sub_hrs
             rec.extra_hour_active = rec.total_this_sub_hrs > rec.standard_hours
@@ -165,7 +173,35 @@ class FacultyClassRecords(models.Model):
                 rec.extra_amount_and_gross_amount = rec.gross_payable + (rec.extra_hour * rec.subject_rate)
 
     def act_submit(self):
-        self.state = 'head_approval'
+        today = date.today()
+        current_month = today.strftime("%B").lower()  # e.g., "july"
+        print(current_month, 'curr')
+        for rec in self:
+            config = self.env['faculty.lock.config'].search([], limit=1, order='id desc')
+            lock_day = config.lock_day if config else 21
+            if rec.is_unlocked_by_admin != True:
+                if rec.month_of_record == current_month:
+                    print('yes')
+                    # Get lock_day from config
+                    # default fallback
+
+                    if today.day > lock_day:
+                        raise UserError(
+                            _("You cannot submit this record. Submissions are locked after day %s of this month.") % lock_day)
+                    else:
+                        rec.state = 'head_approval'
+                        rec.activity_schedule('faculty_17.mail_activity_faculty_records', user_id=rec.branch_head_id.id,
+                                              note=f' A new faculty record has been assigned to you by {rec.create_uid.name}. Please review and take necessary action.')
+                else:
+                    raise UserError(
+                        _("You cannot submit this record. Submissions are locked after day %s of this month.") % lock_day)
+
+            else:
+                print("is locked")
+                rec.state = 'head_approval'
+                rec.activity_schedule('faculty_17.mail_activity_faculty_records', user_id=rec.branch_head_id.id,
+                                      note=f'A new faculty record has been assigned to you by {rec.create_uid.name}. Please review and take necessary action.')
+        # self.state = 'head_approval'
 
     @api.depends('class_ids', 'class_ids.net_hour')
     def _compute_total_net_hour(self):
@@ -179,9 +215,24 @@ class FacultyClassRecords(models.Model):
         self.state = 'draft'
 
     def act_head_approval(self):
+        activity_id = self.env['mail.activity'].search(
+            [('res_id', '=', self.id), ('user_id', '=', self.env.user.id), (
+                'activity_type_id', '=', self.env.ref('faculty_17.mail_activity_faculty_records').id)])
+        if activity_id:
+            activity_id.action_feedback(feedback='Head Approved')
+        users = self.env.ref('faculty_17.group_faculty_accounts_team').users
+        for j in users:
+            self.activity_schedule('faculty_17.mail_activity_faculty_records', user_id=j.id,
+                                  note=f' A new faculty record has been assigned to you by {self.create_uid.name}. Please review and take necessary action.')
+
         self.state = 'accounts_approval'
 
     def act_accounts_approval(self):
+        activity_id = self.env['mail.activity'].search(
+            [('res_id', '=', self.id), ('user_id', '=', self.env.user.id), (
+                'activity_type_id', '=', self.env.ref('faculty_17.mail_activity_faculty_records').id)])
+        if activity_id:
+            activity_id.action_feedback(feedback='Accounts Approved')
         self.state = 'done'
 
     def act_paid(self):
@@ -196,6 +247,11 @@ class FacultyClassRecords(models.Model):
                 'view_type': 'form',
                 'context': {'default_record_id': self.id}, }
 
+    is_unlocked_by_admin = fields.Boolean(string="Unlocked This Record", default=False)
+
+    def action_unlock_record(self):
+        for rec in self:
+            rec.is_unlocked_by_admin = True
 
 
 class ClassRecords(models.Model):

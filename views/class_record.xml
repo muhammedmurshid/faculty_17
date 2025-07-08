@@ -15,33 +15,49 @@
                 <header>
                     <field name="state" widget="statusbar"/>
                     <button name="act_submit" type="object" string="Submit" invisible="state != 'draft'"
-                            class="oe_highlight" groups="faculty_17.group_faculty_academic_head,faculty_17.group_faculty_coordinator"/>
-                    <button name="act_head_approval" type="object" string="Head Approval" invisible="state != 'head_approval'"
+                            class="oe_highlight"
+                            groups="faculty_17.group_faculty_academic_head,faculty_17.group_faculty_coordinator"/>
+                    <button name="act_head_approval" type="object" string="Head Approval"
+                            invisible="state != 'head_approval'"
                             class="oe_highlight" groups="faculty_17.group_faculty_academic_head"/>
-                    <button name="act_accounts_approval" type="object" string="Head Approval" invisible="state != 'accounts_approval'"
-                            class="oe_highlight" groups="faculty_17.group_faculty_accounts_team,faculty_17.group_faculty_accounts_head"/>
+                    <button name="act_accounts_approval" type="object" string="Accounts Approval"
+                            invisible="state != 'accounts_approval'"
+                            class="oe_highlight"
+                            groups="faculty_17.group_faculty_accounts_team,faculty_17.group_faculty_accounts_head"/>
                     <button name="act_paid" type="object" string="Paid" invisible="state != 'done'"
-                            class="oe_highlight" groups="faculty_17.group_faculty_accounts_team,faculty_17.group_faculty_accounts_head"/>
-                    <button name="act_return_to_draft" string="Return to Draft" type="object" invisible="state != 'head_approval'"/>
-                    <button name="act_reject" type="object" string="Reject" invisible="state in ['draft','paid','rejected']"
+                            class="oe_highlight"
+                            groups="faculty_17.group_faculty_accounts_team,faculty_17.group_faculty_accounts_head"/>
+                    <button name="act_return_to_draft" string="Return to Draft" type="object"
+                            invisible="state != 'head_approval'"/>
+                    <button name="act_reject" type="object" string="Reject"
+                            invisible="state in ['draft','paid','rejected']"
                             class="btn-convert"/>
+                    <button name="action_unlock_record" type="object" string="Unlock Record" class="btn-primary"
+                            groups="base.group_no_one" invisible="is_unlocked_by_admin == True"/>
                 </header>
                 <sheet>
                     <group>
                         <group>
-                            <field name="faculty_id" class="o_form_required" options="{'no_create':True}" readonly="state != 'draft'"/>
+                            <field name="faculty_id" class="o_form_required" options="{'no_create':True}"
+                                   readonly="state != 'draft'"/>
 
                             <field name="month_of_record" class="o_form_required" readonly="state != 'draft'"/>
                             <field name="year_of_record" class="o_form_required" readonly="state != 'draft'"/>
+                            <field name="is_unlocked_by_admin"
+                                   />
                         </group>
                         <group>
                             <!--                            <field name="create_date"/>-->
-                            <field name="branch_id" class="o_form_required" options="{'no_create':True}" readonly="state != 'draft'"/>
+                            <field name="branch_id" class="o_form_required" options="{'no_create':True}"
+                                   readonly="state != 'draft'"/>
                             <field name="branch_head_id" widget="many2one_avatar" class="o_form_required"
                                    options="{'no_create':True}" readonly="state != 'draft'"/>
-                            <field name="batch_id" class="o_form_required" options="{'no_create':True}" readonly="state != 'draft'"/>
-                            <field name="course_id" class="o_form_required" options="{'no_create':True}" readonly="state != 'draft'"/>
-                            <field name="subject_id" class="o_form_required" options="{'no_create':True}" readonly="state != 'draft'"/>
+                            <field name="batch_id" class="o_form_required" options="{'no_create':True}"
+                                   readonly="state != 'draft'"/>
+                            <field name="course_id" class="o_form_required" options="{'no_create':True}"
+                                   readonly="state != 'draft'"/>
+                            <field name="subject_id" class="o_form_required" options="{'no_create':True}"
+                                   readonly="state != 'draft'"/>
                             <field name="currency_id" invisible="1"/>
                         </group>
                     </group>
@@ -85,12 +101,12 @@
                                     <field name="gst_amount" widget="monetary" string="Gross Amount + Gst Amount"/>
                                     <field name="tds_amount" widget="monetary"/>
                                     <field name="advance_amount" widget="monetary"/>
-                                    <field name="net_payable" widget="monetary" />
+                                    <field name="net_payable" widget="monetary"/>
                                 </group>
                             </group>
                         </page>
                         <page name="rejected_reason" string="Rejected Details"
-                              invisible="state != 'rejected'" >
+                              invisible="state != 'rejected'">
                             <group>
                                 <group>
                                     <field name="rejected_reason" readonly="1"/>
@@ -115,7 +131,8 @@
                         <!--                        <field name="gst_amount" widget="monetary" string="Gross Amount + Gst Amount"/>-->
                         <!--                        <field name="tds_amount" widget="monetary"/>-->
                         <!--                        <field name="advance_amount" widget="monetary"/>-->
-                        <field name="net_payable" widget="monetary" groups="faculty_17.group_faculty_accounts_team,faculty_17.group_faculty_accounts_head,faculty_17.group_faculty_admin"/>
+                        <field name="net_payable" widget="monetary"
+                               groups="faculty_17.group_faculty_accounts_team,faculty_17.group_faculty_accounts_head,faculty_17.group_faculty_admin"/>
                     </group>
                 </sheet>
                 <div class="oe_chatter">

@@ -3,3 +3,4 @@ from . import user
 from . import faculty_details
 from . import faculty_rate
 from . import reject_reason
+from . import lock_day

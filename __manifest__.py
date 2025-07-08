@@ -24,7 +24,8 @@
         'views/subject_stnd_hr.xml',
         'views/faculty_rates.xml',
         'views/rejection.xml',
-        # 'views/clarification.xml'
+        'views/lock_day.xml',
+        'data/activity.xml'
 
     ],
     'assets': {

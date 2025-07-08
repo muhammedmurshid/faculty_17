@@ -9,6 +9,11 @@ class RejectReason(models.TransientModel):
     rejected_reason = fields.Text(string="Rejected Reason", required=1)
 
     def reject(self):
+        activity_id = self.env['mail.activity'].search(
+            [('res_id', '=', self.record_id.id), ('user_id', '=', self.env.user.id), (
+                'activity_type_id', '=', self.env.ref('faculty_17.mail_activity_faculty_records').id)])
+        if activity_id:
+            activity_id.action_feedback(feedback='rejected')
         for rec in self:
             rec.record_id.state = 'rejected'
             rec.record_id.rejected_person = self.env.user

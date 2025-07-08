@@ -31,3 +31,4 @@ access_class_records_accounts_team,access_class_records,model_class_records,facu
 access_faculty_rates_accounts_team,access_faculty_rates,model_faculty_rates,faculty_17.group_faculty_accounts_team,1,1,1,1
 
 access_rejection,access_rejection,model_reject_reason,,1,1,1,1
+access_lock_day,access_lock_day,model_faculty_lock_config,,1,1,1,1
