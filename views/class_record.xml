@@ -33,7 +33,7 @@
                             invisible="state in ['draft','paid','rejected']"
                             class="btn-convert"/>
                     <button name="action_unlock_record" type="object" string="Unlock Record" class="btn-primary"
-                            groups="base.group_no_one" invisible="is_unlocked_by_admin == True"/>
+                            groups="faculty_17.group_faculty_admin" invisible="is_unlocked_by_admin == True"/>
                 </header>
                 <sheet>
                     <group>
@@ -43,7 +43,7 @@
 
                             <field name="month_of_record" class="o_form_required" readonly="state != 'draft'"/>
                             <field name="year_of_record" class="o_form_required" readonly="state != 'draft'"/>
-                            <field name="is_unlocked_by_admin"
+                            <field name="is_unlocked_by_admin" groups="faculty_17.group_faculty_admin"
                                    />
                         </group>
                         <group>
