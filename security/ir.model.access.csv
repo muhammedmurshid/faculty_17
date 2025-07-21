@@ -29,6 +29,6 @@ access_faculty_records_accounts_team,access_faculty_records,model_faculty_record
 access_faculty_details_accounts_team,access_faculty_details,model_faculty_details,faculty_17.group_faculty_accounts_team,1,0,0,0
 access_class_records_accounts_team,access_class_records,model_class_records,faculty_17.group_faculty_accounts_team,1,1,1,1
 access_faculty_rates_accounts_team,access_faculty_rates,model_faculty_rates,faculty_17.group_faculty_accounts_team,1,1,1,1
-
+    
 access_rejection,access_rejection,model_reject_reason,,1,1,1,1
-access_lock_day,access_lock_day,model_faculty_lock_config,,1,1,1,1
+access_lock_day,access_lock_day,model_faculty_lock_config,faculty_17.group_faculty_admin,1,1,1,1
